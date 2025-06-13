@@ -16,6 +16,8 @@ import scipy
 from pyDOE import lhs
 import scipy.io as sio
 from Crunch.Models.polynomials import  *
+from typing import Sequence, Callable
+
 # KAN Layers
 class Polynomial_grid_KAN_layer(nn.Module):
     out_dim: int
@@ -322,7 +324,48 @@ class Cheby_KAN_layer(nn.Module):
         C_n_Tn = jnp.einsum('bdi,iod->bo', T_n, C_n)
 
         return C_n_Tn
-    
+
+
+class eMLP(nn.Module):
+    layers: Sequence[int]
+    activation: Callable = nn.relu
+    degree: int=5
+    @nn.compact
+    def __call__(self, x):
+        init = nn.initializers.glorot_normal()
+        X =Polynomial_Embedding_Layer(degree=self.degree)(x)
+        H = nn.activation.tanh(WN_layer(self.layers[0], kernel_init=init)(X))
+        for feat in self.layers[1:-1]:
+            H = AdaptiveResNet(out_features=feat)(H) 
+        H = Polynomial_Embedding_Layer(degree=self.degree)(H)
+        H = WN_layer(self.layers[-1], kernel_init=init)(H)
+        return H
+class get_Psi(nn.Module):
+    degree: int
+    features: Sequence[int]
+    M: int = 10
+
+    def setup(self):
+        # Set up the Chebyshev functions (T_funcs) based on the degree
+        self.T_funcs = [globals()[f"T{i}"] for i in range(self.degree + 1)]
+    @nn.compact
+    def __call__(self, inputs):
+        init = nn.initializers.glorot_normal()
+        sum_psi = 0
+        for i, X in enumerate(inputs):
+            X =Polynomial_Embedding_Layer(degree=self.degree)(X)
+            # Pass through WN_layer and apply tanh activation
+            H = nn.activation.tanh(WN_layer(self.features[0], kernel_init=init)(X))
+            # Pass through AdaptiveResNet layers
+            for fs in self.features[1:-1]:
+                H = AdaptiveResNet(out_features=fs)(H) 
+            # Stack transformations using the T_funcs
+            H = Polynomial_Embedding_Layer(degree=self.degree)(H)
+            H = WN_layer(self.features[-1], kernel_init=init)(H)
+            # Accumulate results
+            sum_psi += H
+        return sum_psi
+
 
 ### Derivatives
 #Taken from: https://github.com/stnamjef/SPINN. Please refer to the original repository
