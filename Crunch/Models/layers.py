@@ -298,7 +298,34 @@ class AdaptiveResNet(nn.Module):
         H = nn.activation.tanh(self.alpha * G + (1 - self.alpha) * H)
         return H
 
+
+class Cheby_KAN_layer(nn.Module):
+    out_dim: int
+    degree: int
+    polynomial_type: str = 'T'
+    normalization: callable = jnp.tanh
+
+    def setup(self):
+        self.T_funcs = [globals()[f"{self.polynomial_type}{i}"] for i in range(self.degree + 1)]
+        self.normalization_fn = self.normalization
+
+    @nn.compact
+    def __call__(self, X):
+        X = self.normalization_fn(X)
+        in_dim = X.shape[1]
+        C_n = self.param(
+            'C_n',
+            nn.initializers.normal(1 / (in_dim * (self.degree + 1))),
+            (in_dim, self.out_dim, self.degree + 1)
+        )
+        T_n = jnp.stack([func(X) for func in self.T_funcs], axis=1)
+        C_n_Tn = jnp.einsum('bdi,iod->bo', T_n, C_n)
+
+        return C_n_Tn
+    
+
 ### Derivatives
+#Taken from: https://github.com/stnamjef/SPINN. Please refer to the original repository
 # forward over forward
 def hvp_fwdfwd(f, primals, tangents, return_primals=False):
     g = lambda primals: jvp(f, (primals,), tangents)[1]
