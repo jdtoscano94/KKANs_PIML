@@ -374,3 +374,10 @@ def hvp_revfwd(f, primals, tangents, return_primals=False):
         return primals_out, tangents_out
     else:
         return tangents_out
+
+# For QR DeepONet
+def init_A(rng_key, N,K):
+    k1, k2 = random.split(rng_key)
+    glorot_stddev = 1. / np.sqrt((N + K) / 2.)
+    A= glorot_stddev * random.normal(k1, (N, K))
+    return A
