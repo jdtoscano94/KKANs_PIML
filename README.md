@@ -22,10 +22,12 @@ If you find this content useful please consider citing our work as follows:
 
 ## Prerequisites
 
-* **Python**: Recommended version is ≥ 3.9.
+* **Python**: Recommended version is 3.11.
 * **NVIDIA GPU**: Required to run the models, along with a compatible CUDA toolkit.
 * **Conda**: Recommended for managing Python environments and dependencies.
-* **Important**: The code is compatible with any version of JAX ≥ 0.3.23 and any version of NumPy. 
+* **Important**: The code is compatible with any version of JAX ≥ 0.3.23 and any version of NumPy. The results in this repository were obtained with JAX 0.4.29
+
+
 
 ## Critical Step
 
