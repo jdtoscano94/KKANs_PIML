@@ -67,7 +67,7 @@ parser.add_argument('--NC', type=int, default=25600, help='Number of samples for
 parser.add_argument('--NI', type=int, default=512, help='Number of iterations')
 parser.add_argument('--NB', type=int, default=512, help='Batch size')
 parser.add_argument('--NC_TEST', type=int, default=100, help='Number of test samples')
-parser.add_argument('--SEED', type=int, default=333, help='Random seed')
+parser.add_argument('--SEED', type=int, default=444, help='Random seed')
 parser.add_argument('--EPOCHS', type=int, default=500000, help='Number of training epochs')
 parser.add_argument('--N_LAYERS', type=int, default=4, help='Number of layers in the network')
 parser.add_argument('--HIDDEN', type=int, default=64, help='Number of hidden units per layer')
@@ -139,12 +139,11 @@ class AdaptiveResNet(nn.Module):
         self.alpha = self.param('alpha', nn.initializers.ones, ())
     @nn.compact
     def __call__(self, H):
-        init = nn.initializers.glorot_normal()
+        init = nn.initializers.variance_scaling(scale=1.0, mode="fan_in", distribution="uniform")
         F = nn.activation.tanh(WN_layer(self.out_features, kernel_init=init)(H))
         G = WN_layer(self.out_features, kernel_init=init)(F)
         H = nn.activation.tanh(self.alpha * G + (1 - self.alpha) * H)
         return H
-
 # %%
 class get_Psi(nn.Module):
     degree: int
@@ -156,7 +155,7 @@ class get_Psi(nn.Module):
         self.T_funcs = [globals()[f"T{i}"] for i in range(self.degree + 1)]
     @nn.compact
     def __call__(self, inputs):
-        init = nn.initializers.glorot_normal()
+        init = nn.initializers.variance_scaling(scale=1.0, mode="fan_in", distribution="uniform")
         sum_psi = 0
         for i, X in enumerate(inputs):
             if i > 0:
