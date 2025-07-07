@@ -7,17 +7,23 @@ Inspired by the Kolmogorov-Arnold representation theorem and Kurkova's principle
 
 Currently, this repository contains the code for the following paper:
 
-1. **Toscano, J. D., Wang, L. L., & Karniadakis, G. E.** (2024). KKANs: Kurkova-Kolmogorov-Arnold Networks and Their Learning Dynamics. arXiv preprint arXiv:2412.16738.
+1. **Juan Diego Toscano, Li-Lian Wang, George Em Karniadakis** , KKANs:
+Kurkova-Kolmogorov-Arnold Networks and Their Learning Dynamics, Neural Networks (2025), doi:
+https://doi.org/10.1016/j.neunet.2025.107831.
 
 If you find this content useful please consider citing our work as follows:
 
 ```bibtex
-@article{toscano2024kkans,
-  title={KKANs: Kurkova-Kolmogorov-Arnold Networks and Their Learning Dynamics},
-  author={Toscano, Juan Diego and Wang, Li-Lian and Karniadakis, George Em},
-  journal={arXiv preprint arXiv:2412.16738},
-  year={2024}
-}
+@article{Toscano_kkans_2025,
+title = {KKANs: Kurkova-Kolmogorov-Arnold Networks and Their Learning Dynamics},
+journal = {Neural Networks},
+pages = {107831},
+year = {2025},
+issn = {0893-6080},
+doi = {https://doi.org/10.1016/j.neunet.2025.107831},
+url = {https://www.sciencedirect.com/science/article/pii/S0893608025007117},
+author = {Juan Diego Toscano and Li-Lian Wang and George Em Karniadakis},
+keywords = {Kolmogorov-Arnold representation theorem, physics-informed neural networks, Kolmogorov-Arnold networks, optimization algorithms, self-adaptive weights, information bottleneck theory}}
 ```
 
 ## Prerequisites
